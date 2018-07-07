@@ -1,0 +1,39 @@
+[[package]]
+name = "bitflags"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "cc"
+version = "1.0.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "imgui"
+version = "0.0.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "imgui-sys 0.0.18 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "imgui-sys"
+version = "0.0.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "bitflags 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "cc 1.0.17 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "opengl-gui"
+version = "0.1.0"
+dependencies = [
+ "imgui 0.0.18 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[metadata]
+"checksum bitflags 1.0.3 (registry+https://github.com/rust-lang/crates.io-index)" = "d0c54bb8f454c567f21197eefcdbf5679d0bd99f2ddbe52e84c77061952e6789"
+"checksum cc 1.0.17 (registry+https://github.com/rust-lang/crates.io-index)" = "49ec142f5768efb5b7622aebc3fdbdbb8950a4b9ba996393cb76ef7466e8747d"
+"checksum imgui 0.0.18 (registry+https://github.com/rust-lang/crates.io-index)" = "9ceccdd3263306b49c57cde2d1681a6520b88e6501331252489ca5cbd3e84617"
+"checksum imgui-sys 0.0.18 (registry+https://github.com/rust-lang/crates.io-index)" = "47aea503694cda888f5176e0cc01099ee89b5ebb4548e309711e96b927e2a4b7"
