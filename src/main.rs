@@ -1,11 +1,18 @@
+extern crate gfx;
+extern crate gfx_window_glutin;
+extern crate glutin;
+#[macro_use]
+extern crate imgui;
+extern crate imgui_gfx_renderer;
+extern crate imgui_sys;
+
+use gfx::traits::FactoryExt;
+use gfx::Device;
+use gfx_window_glutin as gfx_glutin;
+use imgui::*;
+
+// mod support_gfx;
+
 fn main() {
-    // ui.window(im_str!("Hello world"))
-    // .size((300.0, 100.0), ImGuiCond::FirstUseEver)
-    // .build(|| {
-    //     ui.text(im_str!("Hello world!"));
-    //     ui.text(im_str!("This...is...imgui-rs!"));
-    //     ui.separator();
-    //     let mouse_pos = ui.imgui().mouse_pos();
-    //     ui.text(im_str!("Mouse Position: ({:.1},{:.1})", mouse_pos.0, mouse_pos.1));
-    // });
+    support_gfx::run("hello_gfx.rs".to_owned(), CLEAR_COLOR, hello_world);
 }
