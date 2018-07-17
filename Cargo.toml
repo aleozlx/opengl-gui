@@ -4,11 +4,7 @@ version = "0.1.0"
 authors = ["Alex Yang <aleozlx@gmail.com>"]
 
 [dependencies]
-gfx = "0.17"
-gfx_window_glutin = "0.22"
-glium = { version = "0.21", default-features = true }
-glutin = "0.14"
-imgui = { version = "0.0.18" }
-imgui-gfx-renderer = { version = "0.0.18" }
-imgui-glium-renderer = { version = "0.0.18" }
-imgui-sys = { version = "0.0.18", features = ["gfx"] }
+
+[dependencies.gtk]
+version = "0.4.1"
+features = ["v3_10"]
