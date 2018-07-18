@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Alex Yang <aleozlx@gmail.com>"]
 
 [dependencies]
+yaml-rust = "0.4"
 
 [dependencies.gtk]
 version = "0.4.1"
