@@ -22,7 +22,7 @@
               <object class="GtkTreeView" id="tree_nnblocks">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="headers_visible">False</property>
+                <property name="headers_clickable">False</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection"/>
                 </child>

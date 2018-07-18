@@ -10,7 +10,12 @@ fn append_column(tree: &gtk::TreeView, id: i32) {
     column.pack_start(&cell, true);
     // Association of the view's column with the model's `id` column.
     column.add_attribute(&cell, "text", id);
-    column.set_max_width(200);
+    column.set_max_width(250);
+    column.set_title(match id {
+        0 => "Structure",
+        1 => "Params",
+        _ => ".."
+    });
     tree.append_column(&column);
 }
 
@@ -19,13 +24,13 @@ fn create_and_fill_model() -> gtk::TreeStore {
     let model = gtk::TreeStore::new(&[String::static_type(), u32::static_type()]);
 
     // Filling up the tree view.
-    let vgg16 = &YamlLoader::load_from_str(include_str!("../vgg16.yaml")).unwrap()[0];
+    let vgg16 = &YamlLoader::load_from_str(include_str!("../vgg16-v2.yaml")).unwrap()[0];
     for block in vgg16["nnblocks"].as_vec().unwrap() {
         let blk_name = block["name"].as_str().unwrap();
         let blk_node = model.insert_with_values(None, None, &[0, 1], &[&blk_name, &0]);
 
         for layer in block["layers"].as_vec().unwrap() {
-            let layer_name = layer.as_str().unwrap();
+            let layer_name = layer["class"].as_str().unwrap();
             model.insert_with_values(Some(&blk_node), None, &[0, 1], &[&layer_name, &0]);
         }
     }

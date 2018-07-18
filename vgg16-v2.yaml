@@ -1,0 +1,141 @@
+nnblocks:
+  - name: conv1
+    layers:
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 64
+      kernel_size: 3,3
+      activation: relu
+      name: conv11
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 64
+      kernel_size: 3,3
+      activation: relu
+      name: conv12
+    - class: MaxPooling2D
+      pool_size: 2,2
+      strides: 2,2
+      name: max1
+  - name: conv2
+    layers:
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 128
+      kernel_size: 3,3
+      activation: relu
+      name: conv21
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 128
+      kernel_size: 3,3
+      activation: relu
+      name: conv22
+    - class: MaxPooling2D
+      pool_size: 2,2
+      strides: 2,2
+      name: max2
+  - name: conv3
+    layers:
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 256
+      kernel_size: 3,3
+      activation: relu
+      name: conv31
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 256
+      kernel_size: 3,3
+      activation: relu
+      name: conv32
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 128
+      kernel_size: 3,3
+      activation: relu
+      name: conv33
+    - class: MaxPooling2D
+      pool_size: 2,2
+      strides: 2,2
+      name: max3
+  - name: conv4
+    layers:
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 512
+      kernel_size: 3,3
+      activation: relu
+      name: conv41
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 512
+      kernel_size: 3,3
+      activation: relu
+      name: conv42
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 512
+      kernel_size: 3,3
+      activation: relu
+      name: conv43
+    - class: MaxPooling2D
+      pool_size: 2,2
+      strides: 2,2
+      name: max4
+  - name: conv5
+    layers:
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 512
+      kernel_size: 3,3
+      activation: relu
+      name: conv51
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 512
+      kernel_size: 3,3
+      activation: relu
+      name: conv52
+    - class: ZeroPadding2D
+      padding: 1,1
+    - class: Conv2D
+      filters: 512
+      kernel_size: 3,3
+      activation: relu
+      name: conv53
+    - class: MaxPooling2D
+      pool_size: 2,2
+      strides: 2,2
+      name: max5
+  - name: classifier
+    layers:
+    - class: Flatten
+    - class: Dense
+      units: 4096
+      activation: relu
+      name: dense61
+    - class: Dropout
+      rate: 0.5
+    - class: Dense
+      units: 4096
+      activation: relu
+      name: dense62
+    - class: Dropout
+      rate: 0.5
+    - class: Dense
+      units: 1000
+      activation: softmax
+      name: dense63
