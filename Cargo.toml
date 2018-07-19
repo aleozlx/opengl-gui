@@ -5,7 +5,10 @@ authors = ["Alex Yang <aleozlx@gmail.com>"]
 
 [dependencies]
 yaml-rust = "0.4"
+gl = "0.10.0"
+epoxy = "*"
+shared_library = "0.1.9"
 
 [dependencies.gtk]
 version = "0.4.1"
-features = ["v3_10"]
+features = ["v3_16"]
