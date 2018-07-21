@@ -175,6 +175,87 @@ fn create_and_fill_model() -> gtk::TreeStore {
     model
 }
 
+fn prepare_visualization() {
+    let vert_shader = Shader::from_vert_source(
+        &CString::new(include_str!("shadertoy.vert")).unwrap()
+    ).unwrap();
+
+    let frag_shader = Shader::from_frag_source(
+        &CString::new(include_str!("flames.frag")).unwrap()
+    ).unwrap();
+
+    let shader_program = Program::from_shaders(
+        &[vert_shader, frag_shader]
+    ).unwrap();
+
+    shader_program.use_program();
+    
+    let vertices: Vec<f32> = vec![
+    	-1.0, 1.0, 0.0, 0.0, // Top-left
+        1.0, 1.0, 1.0, 0.0, // Top-right
+        1.0, -1.0, 1.0, 1.0, // Bottom-right
+        -1.0, -1.0, 0.0, 1.0  // Bottom-left
+    ];
+    let mut vertex_buffer: gl::types::GLuint = 0;
+    unsafe {
+        gl::GenBuffers(1, &mut vertex_buffer);
+        gl::BindBuffer(gl::ARRAY_BUFFER, vertex_buffer);
+        gl::BufferData(
+            gl::ARRAY_BUFFER, // target
+            (vertices.len() * std::mem::size_of::<f32>()) as gl::types::GLsizeiptr, // size of data in bytes
+            vertices.as_ptr() as *const gl::types::GLvoid, // pointer to data
+            gl::STATIC_DRAW, // usage
+        );
+        gl::BindBuffer(gl::ARRAY_BUFFER, 0); // unbind the buffer
+    }
+
+    let mut element_buffer: gl::types::GLuint = 0;
+    let elements: Vec<u32> = vec![
+        0, 1, 2,
+		2, 3, 0
+    ];
+    unsafe {
+        gl::GenBuffers(1, &mut element_buffer);
+        gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, element_buffer);
+        gl::BufferData(
+            gl::ELEMENT_ARRAY_BUFFER,
+            (elements.len() * std::mem::size_of::<u32>()) as gl::types::GLsizeiptr,
+            elements.as_ptr() as *const gl::types::GLvoid,
+            gl::STATIC_DRAW
+        );
+        gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+    }
+
+    let mut vertex_array: gl::types::GLuint = 0;
+    unsafe {
+        gl::GenVertexArrays(1, &mut vertex_array);
+        gl::BindVertexArray(vertex_array);
+        gl::BindBuffer(gl::ARRAY_BUFFER, vertex_buffer);
+
+        gl::BindFragDataLocation(shader_program.id(), 0, CString::new("fragColor").unwrap().as_ptr());
+        
+        let pos_attr: gl::types::GLuint = gl::GetAttribLocation(shader_program.id(), CString::new("position").unwrap().as_ptr()) as gl::types::GLuint;
+        gl::EnableVertexAttribArray(pos_attr);
+        gl::VertexAttribPointer(pos_attr, 2, gl::FLOAT, gl::FALSE, (4 * std::mem::size_of::<f32>()) as gl::types::GLint, std::ptr::null());
+
+        let tex_attr: gl::types::GLuint = gl::GetAttribLocation(shader_program.id(), CString::new("vsTex").unwrap().as_ptr()) as gl::types::GLuint;
+        gl::EnableVertexAttribArray(tex_attr);
+        gl::VertexAttribPointer(tex_attr, 2, gl::FLOAT, gl::FALSE, (4 * std::mem::size_of::<f32>()) as gl::types::GLint, (2 * std::mem::size_of::<f32>()) as *const std::os::raw::c_void);
+
+        gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+        gl::BindVertexArray(0);
+
+        gl::ClearColor(0.0, 0.0, 0.0, 1.0);
+    }
+
+    let time_unif: gl::types::GLint = unsafe { 
+        gl::GetUniformLocation(shader_program.id(), CString::new("iTime").unwrap().as_ptr())
+    };
+    let resolution_unif: gl::types::GLint = unsafe { 
+        gl::GetUniformLocation(shader_program.id(), CString::new("iResolution").unwrap().as_ptr())
+    };
+}
+
 fn main() {
     if gtk::init().is_err() {
         println!("Failed to initialize GTK.");
@@ -208,11 +289,26 @@ fn main() {
     });
     gl::load_with(epoxy::get_proc_addr);
 
-    canvas.connect_render(|_, _| {
-        unsafe {
-            gl::ClearColor(1.0, 0.0, 0.0, 1.0);
-            gl::Clear(gl::COLOR_BUFFER_BIT);
+    let time_start = std::time::SystemTime::now();
 
+    canvas.connect_realize(|_| {
+        prepare_visualization();
+    });
+
+    canvas.connect_render(move |_, _| {
+        unsafe {
+            gl::Clear(gl::COLOR_BUFFER_BIT);
+            // let time_elapsed = std::time::SystemTime::now().duration_since(time_start).unwrap();
+
+            // gl::BindVertexArray(vertex_array);
+            // gl::Uniform1f(time_unif, time_elapsed.as_secs() as f32 + (time_elapsed.subsec_nanos() / 1_000_000) as f32);
+            // gl::Uniform2f(resolution_unif, 150.0, 150.0);
+            // gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, std::ptr::null());
+            // // gl::DrawArrays(
+            // //     gl::TRIANGLES, // mode
+            // //     0, // starting index in the enabled arrays
+            // //     3 // number of indices to be rendered
+            // // );
             gl::Flush();
         };
 

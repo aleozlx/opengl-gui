@@ -146,9 +146,14 @@ vec2 noiseStackUV(vec3 pos,int octaves,float falloff,float diff){
 	return vec2(displaceA,displaceB);
 }
 
-void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-		float time = iTime;
-		vec2 resolution = iResolution.xy;
+in vec2 fragCoord;
+out vec4 fragColor;
+uniform float iTime;
+uniform vec2 iResolution;
+
+void main() {
+	float time = iTime;
+	vec2 resolution = iResolution.xy;
 	vec2 drag = vec2(0, 0);
 	vec2 offset = vec2(0, 0);
 		//
