@@ -175,7 +175,7 @@ fn create_and_fill_model() -> gtk::TreeStore {
     model
 }
 
-fn prepare_visualization() {
+fn prepare_visualization() -> gl::types::GLuint {
     let vert_shader = Shader::from_vert_source(
         &CString::new(include_str!("shadertoy.vert")).unwrap()
     ).unwrap();
@@ -226,10 +226,10 @@ fn prepare_visualization() {
         gl::BindBuffer(gl::ARRAY_BUFFER, 0);
     }
 
-    let mut vertex_array: gl::types::GLuint = 0;
+    // let mut vertex_array: gl::types::GLuint = 0;
     unsafe {
-        gl::GenVertexArrays(1, &mut vertex_array);
-        gl::BindVertexArray(vertex_array);
+        gl::GenVertexArrays(1, &mut g_vertex_array);
+        gl::BindVertexArray(g_vertex_array);
         gl::BindBuffer(gl::ARRAY_BUFFER, vertex_buffer);
 
         gl::BindFragDataLocation(shader_program.id(), 0, CString::new("fragColor").unwrap().as_ptr());
@@ -248,13 +248,12 @@ fn prepare_visualization() {
         gl::ClearColor(0.0, 0.0, 0.0, 1.0);
     }
 
-    let time_unif: gl::types::GLint = unsafe { 
-        gl::GetUniformLocation(shader_program.id(), CString::new("iTime").unwrap().as_ptr())
-    };
-    let resolution_unif: gl::types::GLint = unsafe { 
-        gl::GetUniformLocation(shader_program.id(), CString::new("iResolution").unwrap().as_ptr())
-    };
+    return shader_program.id();
 }
+
+static mut g_vertex_array: gl::types::GLuint = 0;
+static mut time_unif: gl::types::GLint = 0;
+static mut resolution_unif: gl::types::GLint = 0;
 
 fn main() {
     if gtk::init().is_err() {
@@ -290,25 +289,30 @@ fn main() {
     gl::load_with(epoxy::get_proc_addr);
 
     let time_start = std::time::SystemTime::now();
-
-    canvas.connect_realize(|_| {
-        prepare_visualization();
+    
+    canvas.connect_realize(|gl_area: &gtk::GLArea| {
+        gtk::GLArea::make_current(gl_area);
+        let shaders = prepare_visualization();
+        unsafe {
+            time_unif = gl::GetUniformLocation(shaders, CString::new("iTime").unwrap().as_ptr());
+            resolution_unif = gl::GetUniformLocation(shaders, CString::new("iResolution").unwrap().as_ptr());
+        }
     });
 
     canvas.connect_render(move |_, _| {
         unsafe {
             gl::Clear(gl::COLOR_BUFFER_BIT);
-            // let time_elapsed = std::time::SystemTime::now().duration_since(time_start).unwrap();
+            let time_elapsed = std::time::SystemTime::now().duration_since(time_start).unwrap();
 
-            // gl::BindVertexArray(vertex_array);
-            // gl::Uniform1f(time_unif, time_elapsed.as_secs() as f32 + (time_elapsed.subsec_nanos() / 1_000_000) as f32);
-            // gl::Uniform2f(resolution_unif, 150.0, 150.0);
-            // gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, std::ptr::null());
-            // // gl::DrawArrays(
-            // //     gl::TRIANGLES, // mode
-            // //     0, // starting index in the enabled arrays
-            // //     3 // number of indices to be rendered
-            // // );
+            gl::BindVertexArray(g_vertex_array);
+            gl::Uniform1f(time_unif, time_elapsed.as_secs() as f32 + (time_elapsed.subsec_nanos() / 1_000_000) as f32);
+            gl::Uniform2f(resolution_unif, 200.0, 200.0);
+            gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, std::ptr::null());
+            // gl::DrawArrays(
+            //     gl::TRIANGLES, // mode
+            //     0, // starting index in the enabled arrays
+            //     3 // number of indices to be rendered
+            // );
             gl::Flush();
         };
 
