@@ -8,6 +8,7 @@ yaml-rust = "0.4"
 gl = "0.10.0"
 epoxy = "*"
 shared_library = "0.1.9"
+image = "*"
 
 [dependencies.gtk]
 version = "0.4.1"
